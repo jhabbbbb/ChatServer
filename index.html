@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>loveChat</title>
+</head>
+<body>
+
+<script src="socket.io.js"></script>
+<script>
+
+  var socket = io('http://localhost:12345');
+  socket.on('handShake', function (data) {
+    console.log(data);
+    socket.emit('handShake', { reply: 'hello server' });
+  });
+
+  var usernameField = document.createElement("input");
+  usernameField.type = "text";
+  usernameField.name = "usernameField";
+  document.body.appendChild(usernameField);
+
+  var usernameButton = document.createElement("input");
+  usernameButton.type = "button";
+  usernameButton.value = "login";
+  usernameButton.name = "usernameButton";
+  document.body.appendChild(usernameButton);
+  usernameButton.onclick = function(){
+    socket.emit('login', {username: usernameField.value, password: "123456"});
+  }
+  
+
+  var textField = document.createElement("input");
+  textField.type = "text";
+  textField.name = "textField";
+  document.body.appendChild(textField);
+
+  var button = document.createElement("input");
+  button.type = "button";
+  button.value = "Send";
+  button.name = "sendButton";
+  button.onclick = function(){
+  	socket.emit("chatMessage", {message: textField.value, type: "message", toUsername: "Bob"});
+  	textField.value = "";
+  }
+  document.body.appendChild(button);
+
+  var button2 = document.createElement("input");
+  button2.type = "button";
+  button2.value = "Like";
+  button2.name = "likeButton";
+  button2.onclick = function(){
+    socket.emit("messageC2S", {message: "like"});
+  }
+  document.body.appendChild(button2);
+
+  socket.on('chatMessage', function(data) {
+  	//document.write(data.message);
+  	var label = document.createElement("marquee");
+  	label.loop = 1;
+  	label.innerHTML = data.message;
+  	document.body.appendChild(label);
+
+  })
+
+  socket.on('status', function(data){
+    console.log(data);
+  });
+
+  socket.on('loginResult', function(data) {
+    if (data.result == "success") {
+      usernameButton.remove();
+      usernameField.remove();
+    }
+  });
+</script>
+
+</body>
+</html>
