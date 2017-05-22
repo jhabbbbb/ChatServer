@@ -38,7 +38,7 @@ io.on('connection', function (socket) {
 		connection.query(query, function (err, res) {
 			if (res.length > 0) {
 				if (res[0].password == data.password) {
-					socket.emit('loginResult', {status: 1, message: "login success", username: res[0].username, userID: res[0].id})
+					socket.emit('loginResult', {status: 1, message: "login success", username: res[0].username, userID: res[0].id, password: res[0].password})
 					socket.userID = res[0].id
 					socketArray.push(socket)
 				} else {
