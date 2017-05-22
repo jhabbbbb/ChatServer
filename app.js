@@ -136,6 +136,7 @@ io.on('connection', function (socket) {
 	})
 	
 	socket.on('messageC2S', function(data) {
+		console.log(data)
 		var query = "insert into message(sender_id, reciver_id, content, type) values("+data.senderID+","+ data.reciverID+",'"+ data.content+"','"+ data.type+"')"
 		console.log(query)
 		connection.query(query, function (err, res) {
@@ -149,7 +150,7 @@ io.on('connection', function (socket) {
 		for (var i = 0; i < socketArray.length; i++) {
 			console.log(socketArray[i].userID)
 			if (socketArray[i].userID == data.reciverID) {
-				socketArray[i].emit('messageS2C', {message: data.content})
+				socketArray[i].emit('messageS2C', {message: data.content, senderID: data.senderID, reciverID: data.reciverID, time: data.time})
 				socket.emit('messageSendResult', {status: 1, message: "success"})
 				flag = true
 			}
