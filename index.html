@@ -8,12 +8,12 @@
 <script src="socket.io.js"></script>
 <script>
 
-  var socket = io('http://localhost:12345');
+  var socket = io('http://172.93.43.97:12345');
   socket.on('handShake', function (data) {
     console.log(data);
     socket.emit('handShake', { reply: 'hello server' });
   });
-
+	
   var usernameField = document.createElement("input");
   usernameField.type = "text";
   usernameField.name = "usernameField";
@@ -28,7 +28,56 @@
     socket.emit('login', {username: usernameField.value, password: "123456"});
   }
   
+  var registerField = document.createElement("input");
+  registerField.type = "text";
+  document.body.appendChild(registerField);
 
+  var registerButton = document.createElement("input");
+  registerButton.type = "button";
+  registerButton.value = "register";
+  document.body.appendChild(registerButton);
+  registerButton.onclick = function(){
+    socket.emit('register', {username: registerField.value, password: "123456"});
+  }
+  
+  
+  var searchField = document.createElement("input");
+  searchField.type = "text";
+  document.body.appendChild(searchField);
+
+  var searchButton = document.createElement("input");
+  searchButton.type = "button";
+  searchButton.value = "search";
+  document.body.appendChild(searchButton);
+  searchButton.onclick = function(){
+    socket.emit('search', {username: searchField.value});
+  }
+  
+
+  var addFriendButton = document.createElement("input");
+  addFriendButton.type = "button";
+  addFriendButton.value = "addFriend";
+  document.body.appendChild(addFriendButton);
+  addFriendButton.onclick = function(){
+    socket.emit('addFriendRequest', {id1: 1, id2: 2, username1: 'laoluo', username2: 'maxiaer'});
+  }
+  
+  var confirmFriendButton = document.createElement("input");
+  confirmFriendButton.type = "button";
+  confirmFriendButton.value = "confirmFriend";
+  document.body.appendChild(confirmFriendButton);
+  confirmFriendButton.onclick = function(){
+    socket.emit('addFriendConfirm', {id1: 1, id2: 2});
+  }
+  
+  var friendListButton = document.createElement("input");
+  friendListButton.type = "button";
+  friendListButton.value = "friendList";
+  document.body.appendChild(friendListButton);
+  friendListButton.onclick = function(){
+    socket.emit('friendList', {id: 1});
+  }
+  
   var textField = document.createElement("input");
   textField.type = "text";
   textField.name = "textField";
@@ -39,7 +88,7 @@
   button.value = "Send";
   button.name = "sendButton";
   button.onclick = function(){
-  	socket.emit("chatMessage", {message: textField.value, type: "message", toUsername: "Bob"});
+  	socket.emit("messageC2S", {content: textField.value, type: "message", senderID: 1, reciverID: 2});
   	textField.value = "";
   }
   document.body.appendChild(button);
@@ -53,7 +102,7 @@
   }
   document.body.appendChild(button2);
 
-  socket.on('chatMessage', function(data) {
+  socket.on('messageS2C', function(data) {
   	//document.write(data.message);
   	var label = document.createElement("marquee");
   	label.loop = 1;
@@ -67,11 +116,34 @@
   });
 
   socket.on('loginResult', function(data) {
-    if (data.result == "success") {
-      usernameButton.remove();
-      usernameField.remove();
+    if (data.status == 1) {
+		console.log("success")
     }
   });
+  
+  socket.on('searchResult', function(data) {
+	console.log(data)
+  })
+  
+    socket.on('addFriendRequestResult', function(data) {
+	console.log(data)
+  })
+    socket.on('addFriendConfirmResult', function(data) {
+	console.log(data)
+  })
+  
+    socket.on('friendListResult', function(data) {
+	console.log(data)
+  })
+  
+  socket.on('messageStoreResult', function(data) {
+	console.log(data)
+  })
+  
+  
+    socket.on('messageSendResult', function(data) {
+	console.log(data)
+  })
 </script>
 
 </body>
